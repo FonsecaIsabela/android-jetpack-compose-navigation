@@ -10,7 +10,7 @@ import br.com.alura.panucci.ui.screens.HighlightsListScreen
 
 internal const val highlightListRoute = "highlight"
 
-fun NavGraphBuilder.highlightGraphListScreen(navController: NavHostController) {
+fun NavGraphBuilder.highlightListScreen(navController: NavHostController) {
     composable(highlightListRoute) {
         HighlightsListScreen(
             products = sampleProducts,
