@@ -9,19 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PointOfSale
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -29,18 +18,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import br.com.alura.panucci.navigation.PanucciNavHost
-import br.com.alura.panucci.navigation.drinksRoute
-import br.com.alura.panucci.navigation.highlightListRoute
-import br.com.alura.panucci.navigation.menuRoute
-import br.com.alura.panucci.navigation.navigateSingleTopWithPopTo
-import br.com.alura.panucci.navigation.navigateToCheckout
-import br.com.alura.panucci.navigation.navigateToDrinks
-import br.com.alura.panucci.navigation.navigateToHighlight
-import br.com.alura.panucci.navigation.navigateToMenu
+import br.com.alura.panucci.navigation.*
 import br.com.alura.panucci.ui.components.BottomAppBarItem
 import br.com.alura.panucci.ui.components.PanucciBottomAppBar
 import br.com.alura.panucci.ui.components.bottomAppBarItems
+import br.com.alura.panucci.ui.screens.*
 import br.com.alura.panucci.ui.theme.PanucciTheme
 
 class MainActivity : ComponentActivity() {
@@ -66,28 +48,28 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val currentRoute = currentDestination?.route
                     val selectedItem by remember(currentDestination) {
-                        val item = when (currentDestination?.route) {
-                            highlightListRoute -> BottomAppBarItem.HighlightsList
+                        val item = when (currentRoute) {
+                            highlightsListRoute -> BottomAppBarItem.HighlightsList
                             menuRoute -> BottomAppBarItem.Menu
                             drinksRoute -> BottomAppBarItem.Drinks
                             else -> BottomAppBarItem.HighlightsList
                         }
                         mutableStateOf(item)
                     }
-                    val containsInBottomAppBarItems = when (currentRoute) {
-                        highlightListRoute, menuRoute, drinksRoute -> true
+                    val containsInBottomAppBarItems = when(currentRoute) {
+                        highlightsListRoute, menuRoute, drinksRoute -> true
                         else -> false
                     }
                     val isShowFab = when (currentDestination?.route) {
                         menuRoute,
                         drinksRoute -> true
-
                         else -> false
                     }
                     PanucciApp(
                         bottomAppBarItemSelected = selectedItem,
                         onBottomAppBarItemSelectedChange = { item ->
-                            navController.navigateSingleTopWithPopTo(item)                        },
+                            navController.navigateSingleTopWithPopUpTo(item)
+                        },
                         onFabClick = {
                             navController.navigateToCheckout()
                         },
@@ -101,6 +83,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

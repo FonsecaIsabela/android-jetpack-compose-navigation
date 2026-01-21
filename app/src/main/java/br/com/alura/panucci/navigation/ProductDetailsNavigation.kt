@@ -16,7 +16,7 @@ private const val productIdArgument = "productId"
 
 fun NavGraphBuilder.productDetailsScreen(navController: NavHostController) {
     composable(
-        "${productDetailsRoute}/{$productIdArgument}"
+        "$productDetailsRoute/{$productIdArgument}"
     ) { backStackEntry ->
         backStackEntry.arguments?.getString(productIdArgument)?.let { id ->
             val viewModel = viewModel<ProductDetailsViewModel>()
@@ -29,6 +29,12 @@ fun NavGraphBuilder.productDetailsScreen(navController: NavHostController) {
                 onNavigateToCheckout = {
                     navController.navigateToCheckout()
                 },
+                onTryFindProductAgain = {
+                    viewModel.findProductById(id)
+                },
+                onBackStack = {
+                    navController.navigateUp()
+                }
             )
         } ?: LaunchedEffect(Unit) {
             navController.navigateUp()
@@ -36,6 +42,6 @@ fun NavGraphBuilder.productDetailsScreen(navController: NavHostController) {
     }
 }
 
-fun NavController.navigateToProductDetails(id: String) {
-    this.navigate("productDetailsRoute/$id")
+fun NavController.navigateToProductDetails(id: String){
+    navigate("$productDetailsRoute/$id")
 }
