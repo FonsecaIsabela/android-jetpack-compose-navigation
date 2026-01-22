@@ -16,22 +16,21 @@ import br.com.alura.panucci.ui.theme.PanucciTheme
 
 sealed class BottomAppBarItem(
     val label: String,
-    val icon: ImageVector,
+    val icon: ImageVector
 ) {
-
     object HighlightsList : BottomAppBarItem(
         label = "Destaques",
-        icon = Icons.Filled.AutoAwesome,
+        icon = Icons.Filled.AutoAwesome
     )
 
     object Menu : BottomAppBarItem(
         label = "Menu",
-        icon = Icons.Filled.RestaurantMenu,
+        icon = Icons.Filled.RestaurantMenu
     )
 
     object Drinks : BottomAppBarItem(
         label = "Bebidas",
-        icon = Icons.Outlined.LocalBar,
+        icon = Icons.Outlined.LocalBar
     )
 
 }

@@ -1,22 +1,9 @@
 package br.com.alura.panucci.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,9 +22,9 @@ import coil.compose.AsyncImage
 fun ProductDetailsScreen(
     uiState: ProductDetailsUiState,
     modifier: Modifier = Modifier,
-    onNavigateToCheckout: () -> Unit = {},
-    onTryFindProductAgain: () -> Unit = {},
-    onBackStack: () -> Unit = {},
+    onOrderClick: () -> Unit = {},
+    onTryFindProductAgainClick: () -> Unit = {},
+    onBackClick: () -> Unit = {}
 ) {
     when (uiState) {
         ProductDetailsUiState.Failure -> {
@@ -48,22 +35,20 @@ fun ProductDetailsScreen(
             ) {
                 Text(text = "Falha ao buscar o produto")
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = onTryFindProductAgain) {
+                Button(onClick = onTryFindProductAgainClick) {
                     Text(text = "Tentar buscar novamente")
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                TextButton(onClick = onBackStack) {
+                TextButton(onClick = onBackClick) {
                     Text(text = "Voltar")
                 }
             }
         }
-
         ProductDetailsUiState.Loading -> {
             Box(Modifier.fillMaxSize()) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }
-
         is ProductDetailsUiState.Success -> {
             val product = uiState.product
             Column(
@@ -71,7 +56,6 @@ fun ProductDetailsScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-
                 product.image?.let {
                     AsyncImage(
                         model = product.image,
@@ -93,7 +77,7 @@ fun ProductDetailsScreen(
                     Text(product.price.toPlainString(), fontSize = 18.sp)
                     Text(product.description)
                     Button(
-                        onClick = { onNavigateToCheckout() },
+                        onClick = { onOrderClick() },
                         Modifier
                             .fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -102,18 +86,19 @@ fun ProductDetailsScreen(
                     }
                 }
             }
+
         }
     }
 }
 
 @Preview
 @Composable
-fun ProductDetailsScreenPreview() {
+fun ProductDetailsScreenWithSuccessStatePreview() {
     PanucciTheme {
         Surface {
             ProductDetailsScreen(
                 uiState = ProductDetailsUiState.Success(
-                    sampleProducts.random(),
+                    sampleProducts.random()
                 ),
             )
         }
@@ -122,11 +107,23 @@ fun ProductDetailsScreenPreview() {
 
 @Preview
 @Composable
-fun ProductDetailsScreenWithFailurePreview() {
+fun ProductDetailsScreenWithFailureStatePreview() {
     PanucciTheme {
         Surface {
             ProductDetailsScreen(
-                uiState = ProductDetailsUiState.Failure
+                uiState = ProductDetailsUiState.Failure,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ProductDetailsScreenWithLoadingStatePreview() {
+    PanucciTheme {
+        Surface {
+            ProductDetailsScreen(
+                uiState = ProductDetailsUiState.Loading,
             )
         }
     }

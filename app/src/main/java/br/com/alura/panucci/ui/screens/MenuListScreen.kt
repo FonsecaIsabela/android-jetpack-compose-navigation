@@ -23,10 +23,9 @@ import br.com.alura.panucci.ui.uistate.MenuListUiState
 fun MenuListScreen(
     modifier: Modifier = Modifier,
     title: String = "Menu",
-    onNavigateToDetails: (Product) -> Unit = {},
+    onProductClick: (Product) -> Unit = {},
     uiState: MenuListUiState = MenuListUiState()
 ) {
-
     val products = uiState.products
     Column(
         modifier.fillMaxSize()
@@ -53,7 +52,7 @@ fun MenuListScreen(
                     product = p,
                     Modifier
                         .clickable {
-                            onNavigateToDetails(p)
+                            onProductClick(p)
                         }
                 )
             }

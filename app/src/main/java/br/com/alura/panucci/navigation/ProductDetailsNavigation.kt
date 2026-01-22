@@ -6,38 +6,35 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import br.com.alura.panucci.ui.screens.ProductDetailsScreen
 import br.com.alura.panucci.ui.viewmodels.ProductDetailsViewModel
 
 private const val productDetailsRoute = "productDetails"
-private const val productIdArgument = "productId"
+internal const val productIdArgument = "productId"
 
-fun NavGraphBuilder.productDetailsScreen(navController: NavHostController) {
+fun NavGraphBuilder.productDetailsScreen(
+    onNavigateToCheckout: () -> Unit,
+    onPopBackStack: () -> Unit
+) {
     composable(
         "$productDetailsRoute/{$productIdArgument}"
     ) { backStackEntry ->
         backStackEntry.arguments?.getString(productIdArgument)?.let { id ->
-            val viewModel = viewModel<ProductDetailsViewModel>()
+            val viewModel = viewModel<ProductDetailsViewModel>(
+                factory = ProductDetailsViewModel.Factory
+            )
             val uiState by viewModel.uiState.collectAsState()
-            LaunchedEffect(Unit) {
-                viewModel.findProductById(id)
-            }
             ProductDetailsScreen(
                 uiState = uiState,
-                onNavigateToCheckout = {
-                    navController.navigateToCheckout()
-                },
-                onTryFindProductAgain = {
+                onOrderClick = onNavigateToCheckout,
+                onTryFindProductAgainClick = {
                     viewModel.findProductById(id)
                 },
-                onBackStack = {
-                    navController.navigateUp()
-                }
+                onBackClick = onPopBackStack
             )
         } ?: LaunchedEffect(Unit) {
-            navController.navigateUp()
+            onPopBackStack()
         }
     }
 }
