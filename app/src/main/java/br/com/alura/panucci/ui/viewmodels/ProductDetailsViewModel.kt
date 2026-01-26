@@ -1,8 +1,11 @@
 package br.com.alura.panucci.ui.viewmodels
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
@@ -16,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import kotlin.random.Random
 
 class ProductDetailsViewModel(
@@ -27,9 +31,15 @@ class ProductDetailsViewModel(
         ProductDetailsUiState.Loading
     )
     val uiState = _uiState.asStateFlow()
+    private var discount = BigDecimal.ZERO
 
     init {
         viewModelScope.launch {
+            val promoCode = savedStateHandle.get<String?>(productIdArgument)
+            discount = when(promoCode) {
+                "PANUCCI10)" -> BigDecimal("0.1")
+                else -> BigDecimal.ZERO
+            }
             savedStateHandle.getStateFlow<String?>(productIdArgument, null)
                 .filterNotNull()
                 .collect { id ->
@@ -44,6 +54,9 @@ class ProductDetailsViewModel(
             val timemillis = Random.nextLong(500, 2000)
             delay(timemillis)
             val dataState = dao.findById(id)?.let { product ->
+                val priceWithDiscount = product.price - (product.price * discount)
+
+                ProductDetailsUiState.Success(product = product.copy(price = priceWithDiscount))
                 ProductDetailsUiState.Success(product = product)
             } ?: ProductDetailsUiState.Failure
             _uiState.update { dataState }
@@ -53,6 +66,8 @@ class ProductDetailsViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
+                val context = this[APPLICATION_KEY] as Context
+                Log.i("ProductDetailsVM", "context: $context")
                 ProductDetailsViewModel(
                     dao = ProductDao(),
                     savedStateHandle = createSavedStateHandle()
